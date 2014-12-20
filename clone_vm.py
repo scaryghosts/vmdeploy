@@ -27,7 +27,7 @@ def cidrmap(x):
                 '30' : '255.255.255.252'
         }.get(x, '255.255.255.0')
 
-
+#returns a vm object
 def getvm(vlist, vname):
         returnme = 'nothing'
         for v in vlist:
@@ -36,7 +36,7 @@ def getvm(vlist, vname):
                         break
         return returnme
 
-
+# to monitor the clone task given to vcenter
 def waittask(task):
                 time.sleep(5)
                 print (task.info.state)
@@ -47,7 +47,7 @@ def waittask(task):
                         return 0
                 else:
                         return 1
-
+# returns a nice device which is part of the vm object
 def getVmNic (vm):
         returnme = 'nothing'
         for device in vm.config.hardware.device:
@@ -56,7 +56,7 @@ def getVmNic (vm):
         return returnme
 
 
-
+# to attach nic to proper port profile
 def createNicSpec(vm, choice_vlan, master_conf_handle):
         nic = getVmNic(vm)
 
@@ -135,6 +135,7 @@ def createLinuxIdentity(fqdn, master_conf_handle):
 
         return identity
 
+# windows time zone needs to be an integer
 def createWindowsIdentity(fqdn, master_conf_handle):
         split_list = fqdn.split('.')
         shortname = split_list.pop(0)
@@ -174,6 +175,8 @@ def createWindowsSysprepOptions():
         coptions_sysprepreboot = pyVmomi.vim.CustomizationSysprepRebootOption('reboot')
         coptions_win.reboot = coptions_sysprepreboot
         return coptions_win
+
+
 
 def get_ip_configuration(args, master_conf_handle):
     ipmode = master_conf_handle.get('config_file_options', 'ip_config_mode')
@@ -383,6 +386,7 @@ location_spec.pool = clusters[desired_cluster].resourcePool
 view = content.viewManager.CreateContainerView(content.rootFolder,[pyVmomi.vim.VirtualMachine],True)
 vmlist = view.view
 
+# configure resources
 templateVM = getvm(vmlist, image_template)
 vmconf = pyVmomi.vim.vm.ConfigSpec()
 vmconf.numCPUs = numCPU
@@ -397,7 +401,7 @@ if match_windows.search(image) is True:
     cust_options = createWindowsSysprepOptions()
     customspec.options = cust_options
 
-
+#for the actual clone
 clonespec = pyVmomi.vim.vm.CloneSpec()
 clonespec.location = location_spec
 clonespec.config = vmconf
@@ -405,7 +409,7 @@ clonespec.customization = customspec
 clonespec.powerOn = False
 clonespec.template = False
 
-
+#need to remove this is cruft
 clonespec2 = pyVmomi.vim.vm.CloneSpec()
 clonespec2.location = location_spec
 
@@ -415,6 +419,7 @@ if result == 1:
     print('error 1 at clone task -- exiting')
     exit(1)
 
+# the vm is cloned at this point, now change the port profile and power on
 view = content.viewManager.CreateContainerView(content.rootFolder,[pyVmomi.vim.VirtualMachine],True)
 vmlist = view.view
 
