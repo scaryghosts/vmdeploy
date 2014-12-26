@@ -20,23 +20,8 @@ Edit that config file with the corrent options then run
 deploy_vm -f example.conf
 
 In infoblox mode, the config file might look like this:
---
-[Guest1]
-hostname: weasel-web-01.fq.dn
-vlan: 100
-vcenter: vcenter.fq.dn
-image: linux-default
-numcpu: 2
-mem: 4
-cluster: Development
 
-[Guest1]
-hostname: weasel-web-02.fq.dn
-vlan: 100
-vcenter: vcenter.fq.dn
-image: linux-default
-numcpu: 2
-mem: 4
-cluster: Development
---
+
+
+
 
